@@ -2,22 +2,23 @@ package sgu.spring.backend.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
-import sgu.spring.backend.dto.station.StationRequest;
-import sgu.spring.backend.dto.station.StationResponse;
+import sgu.spring.backend.dto.station.*;
 import sgu.spring.backend.model.Station;
 
 import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface StationMapper {
-    StationResponse toDTO(Station station);
 
-    Station toEntity(StationRequest stationRequest);
+    Station addStationRequestToStation(AddStationRequest addStationRequest);
 
-    List<StationResponse> toDTOList(List<Station> station);
+    void updateStationRequestToStation(@MappingTarget Station station, UpdateStationRequest updateStationRequest);
 
-    /**
-     * Chuyển đổi các thuộc tính stationName, stationAdress từ StationRequest sang Station
-     */
-    Station updateEntity(@MappingTarget Station station, StationRequest stationRequest);
+    AddStationResponse stationToAddStationResponse(Station station);
+
+    UpdateStationResponse stationToUpdateStationResponse(Station station);
+
+    List<StationResponse> stationListToStationResponseList(List<Station> stationList);
+
+    StationResponse stationToStationResponse(Station station);
 }

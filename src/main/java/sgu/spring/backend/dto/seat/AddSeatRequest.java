@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class SeatRequest {
+public class AddSeatRequest {
     @NotBlank(message = "Tên không được để trống.")
     private String seatType;
 

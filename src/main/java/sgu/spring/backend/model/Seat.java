@@ -1,7 +1,10 @@
 package sgu.spring.backend.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -20,7 +23,7 @@ public class Seat {
 
     private double seatPrice;
 
-    private int status;
+    private boolean enable;
 
     private LocalDateTime  createdAt;
 

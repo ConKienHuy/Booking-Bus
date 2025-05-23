@@ -23,7 +23,7 @@ public class Station {
 
     private String stationAdress;
 
-    private int status;
+    private boolean enable;
 
     private LocalDateTime createdAt;
 

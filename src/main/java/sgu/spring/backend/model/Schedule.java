@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -23,7 +24,12 @@ public class Schedule {
     @JoinColumn(name = "busId")
     private Bus bus;
 
-    @OneToMany
+    @OneToMany(mappedBy = "schedule")
     private List<StationSchedule> scheduleList;
 
+    private boolean enable;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 }

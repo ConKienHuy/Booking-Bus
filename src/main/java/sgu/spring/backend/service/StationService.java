@@ -2,68 +2,77 @@ package sgu.spring.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sgu.spring.backend.dto.station.StationRequest;
-import sgu.spring.backend.dto.station.StationResponse;
+import sgu.spring.backend.dto.station.*;
+import sgu.spring.backend.exception.EntityInactiveException;
 import sgu.spring.backend.exception.EntityNotFoundException;
 import sgu.spring.backend.mapper.StationMapper;
 import sgu.spring.backend.model.Station;
-import sgu.spring.backend.repository.StationRepsitory;
+import sgu.spring.backend.repository.StationRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class StationService {
-    private StationRepsitory stationRepository;
-    private StationMapper stationMapper;
+    private final StationRepository stationRepository;
+    private final StationMapper stationMapper;
 
     @Autowired
-    public StationService(StationRepsitory stationRepository, StationMapper stationMapper) {
+    public StationService(StationRepository stationRepository, StationMapper stationMapper) {
         this.stationRepository = stationRepository;
         this.stationMapper = stationMapper;
     }
 
     public List<StationResponse> getAll() {
-        List<Station> stationList = stationRepository.findAll();
-        return stationMapper.toDTOList(stationList);
+        List<Station> stationList = stationRepository.findAllActive();
+        return stationMapper.stationListToStationResponseList(stationList);
     }
 
     public StationResponse getById(Long id) {
         Station station = stationRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Station with id not found."));
+                .orElseThrow(() -> new EntityNotFoundException("Station ID: " + id + " not found."));
 
-        return stationMapper.toDTO(station);
+        if(station.isEnable() == false) {
+            throw new EntityInactiveException("Station ID: " + id + " not active.");
+        }
+
+        return stationMapper.stationToStationResponse(station);
     }
 
-    public StationResponse create(StationRequest stationRequest) {
-        Station station = stationMapper.toEntity(stationRequest);
-        station.setStatus(1);
+    public AddStationResponse create(AddStationRequest stationRequest) {
+        Station station = stationMapper.addStationRequestToStation(stationRequest);
+
+        station.setEnable(true);
         station.setCreatedAt(LocalDateTime.now());
         station.setUpdatedAt(LocalDateTime.now());
 
         station = stationRepository.save(station);
-        return stationMapper.toDTO(station);
+        return stationMapper.stationToAddStationResponse(station);
     }
 
-    public StationResponse update(Long id ,StationRequest stationRequest){
+    public UpdateStationResponse update(Long id, UpdateStationRequest stationRequest) {
         Station existedStation = stationRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Station with id not found."));
+                .orElseThrow(() -> new EntityNotFoundException("Station ID: " + id + " not found."));
 
-        existedStation = stationMapper.updateEntity(existedStation ,stationRequest);
+        if(existedStation.isEnable() == false) {
+            throw new EntityInactiveException("Station ID: " + id + " not active.");
+        }
+
+        stationMapper.updateStationRequestToStation(existedStation, stationRequest);
         existedStation.setUpdatedAt(LocalDateTime.now());
-        existedStation = stationRepository.save(existedStation);
 
-        return stationMapper.toDTO(existedStation);
+        existedStation = stationRepository.save(existedStation);
+        return stationMapper.stationToUpdateStationResponse(existedStation);
     }
 
-    public StationResponse delete(Long id){
+    public StationResponse delete(Long id) {
         Station existedStation = stationRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Station with id not found."));
+                .orElseThrow(() -> new EntityNotFoundException("Station ID: " + id + " not found."));
 
-        existedStation.setStatus(0);
+        existedStation.setEnable(false);
         existedStation.setUpdatedAt(LocalDateTime.now());
-        existedStation = stationRepository.save(existedStation);
-        return stationMapper.toDTO(existedStation);
-    }
 
+        existedStation = stationRepository.save(existedStation);
+        return stationMapper.stationToStationResponse(existedStation);
+    }
 }

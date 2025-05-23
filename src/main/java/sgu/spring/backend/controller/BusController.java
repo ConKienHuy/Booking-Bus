@@ -4,8 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sgu.spring.backend.dto.bus.BusRequest;
-import sgu.spring.backend.dto.bus.BusResponse;
+import sgu.spring.backend.dto.bus.*;
 import sgu.spring.backend.service.BusService;
 
 import java.util.List;
@@ -31,21 +30,21 @@ public class BusController {
         return ResponseEntity.ok(bus);
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<BusResponse> add(@RequestBody @Valid BusRequest busRequest) {
-        BusResponse bus = busService.add(busRequest);
+    @PostMapping("/")
+    public ResponseEntity<AddBusResponse> add(@RequestBody @Valid AddBusRequest addBusRequest) {
+        AddBusResponse addBusResponse = busService.add(addBusRequest);
+        return ResponseEntity.ok(addBusResponse);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UpdateBusResponse> update(@PathVariable("id") long id, @RequestBody @Valid UpdateBusRequest updateBusRequest) {
+        UpdateBusResponse bus = busService.update(id, updateBusRequest);
         return ResponseEntity.ok(bus);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<BusResponse> update(@PathVariable("id") long id, @RequestBody @Valid BusRequest busRequest) {
-        BusResponse bus = busService.update(id ,busRequest);
-        return ResponseEntity.ok(bus);
-    }
-
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<BusResponse> delete(@PathVariable("id") long id) {
-        busService.delete(id);
-        return ResponseEntity.noContent().build();
+        BusResponse busResponse = busService.delete(id);
+        return ResponseEntity.ok(busResponse);
     }
 }

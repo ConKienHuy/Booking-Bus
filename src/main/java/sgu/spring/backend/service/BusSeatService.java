@@ -2,8 +2,8 @@ package sgu.spring.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sgu.spring.backend.dto.busseat.BusSeatRequest;
-import sgu.spring.backend.dto.busseat.BusSeatResponse;
+import sgu.spring.backend.dto.busseat.*;
+import sgu.spring.backend.exception.EntityInactiveException;
 import sgu.spring.backend.exception.EntityNotFoundException;
 import sgu.spring.backend.mapper.BusSeatMapper;
 import sgu.spring.backend.model.Bus;
@@ -14,10 +14,7 @@ import sgu.spring.backend.repository.BusSeatRepository;
 import sgu.spring.backend.repository.SeatRepository;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
-
-import static com.fasterxml.jackson.databind.type.LogicalType.DateTime;
 
 @Service
 public class BusSeatService {
@@ -35,59 +32,69 @@ public class BusSeatService {
     }
 
     public List<BusSeatResponse> getAll() {
-        List<BusSeat> busSeatList = busSeatRepository.findAll();
-        return busSeatMapper.toDTOList(busSeatList);
+        List<BusSeat> busSeatList = busSeatRepository.findAllActive();
+        return busSeatMapper.busSeatListToBusResponse(busSeatList);
     }
 
     public BusSeatResponse getById(Long id) {
         BusSeat busSeat = busSeatRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("BusSeat with ID " +id+ " not found."));
 
-        return busSeatMapper.toDTO(busSeat);
+        if(busSeat.isEnable() == false) {
+            throw new EntityInactiveException("BusSeat with ID " + id + " not active.");
+        }
+
+        return busSeatMapper.busSeatToBusSeatResponse(busSeat);
     }
 
-    public BusSeatResponse create(BusSeatRequest busSeatRequest) {
-        BusSeat busSeat = busSeatMapper.toEntity(busSeatRequest);
-        busSeat.setStatus(1);
+    public AddBusSeatResponse create(AddBusSeatRequest addBusSeatRequest) {
+        BusSeat busSeat = busSeatMapper.addBusSeatRequestToBusSeat(addBusSeatRequest);
+        busSeat.setEnable(true);
         busSeat.setCreatedAt(LocalDateTime.now());
         busSeat.setUpdatedAt(LocalDateTime.now());
 
         busSeat = busSeatRepository.save(busSeat);
-        return busSeatMapper.toDTO(busSeat);
+        return busSeatMapper.busSeatToAddBusSeatResponse(busSeat);
     }
 
-    public BusSeatResponse update(Long id, BusSeatRequest busSeatRequest) {
+    public UpdateBusSeatResponse update(Long id, UpdateBusSeatRequest updateBusSeatRequest) {
         BusSeat existBusSeat = busSeatRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Bus Seat with ID " +id+ " not found."));
 
-        Bus bus = getBusOrThrow(busSeatRequest.getBusId());
-        Seat seat = getSeatOrThrow(busSeatRequest.getSeatId());
-        existBusSeat.setBus(bus);
-        existBusSeat.setSeat(seat);
+        if(existBusSeat.isEnable() == false) {
+            throw new EntityInactiveException("BusSeat with ID " + id + " not active.");
+        }
 
-        busSeatMapper.updateEntity(existBusSeat, busSeatRequest);
+        busSeatMapper.updateBusSeatRequestToBusSeat(existBusSeat, updateBusSeatRequest);
+        Bus bus = getBusById(updateBusSeatRequest.getBusId());
+        existBusSeat.setBus(bus);
+        Seat seat = getSeatById(updateBusSeatRequest.getSeatId());
+        existBusSeat.setSeat(seat);
         existBusSeat.setUpdatedAt(LocalDateTime.now());
 
         busSeatRepository.save(existBusSeat);
-        return busSeatMapper.toDTO(existBusSeat);
+        return busSeatMapper.busSeatToUpdateBusSeatResponse(existBusSeat);
     }
 
     public BusSeatResponse delete(Long id) {
         BusSeat existBusSeat = busSeatRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Bus Seat with ID " +id+ " not found."));
 
-        existBusSeat.setStatus(0);
+        existBusSeat.setEnable(false);
         existBusSeat.setUpdatedAt(LocalDateTime.now());
-        return busSeatMapper.toDTO(existBusSeat);
+        return busSeatMapper.busSeatToBusSeatResponse(existBusSeat);
     }
 
-    private Bus getBusOrThrow(Long id) {
-        return busRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Bus with ID " +id+ " not found."));
+    private Bus getBusById(Long busId) {
+        Bus bus = busRepository.findById(busId)
+                .orElseThrow(() -> new EntityNotFoundException("Bus with ID " +busId+ " not found."));
+        return bus;
     }
 
-    private Seat getSeatOrThrow(Long id) {
-        return seatRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Seat with ID " +id+ " not found."));
+    private Seat getSeatById(Long seatId) {
+        Seat seat = seatRepository.findById(seatId)
+                .orElseThrow(() -> new EntityNotFoundException("Seat with ID " +seatId+ " not found."));
+        return seat;
     }
+
 }

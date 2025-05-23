@@ -1,4 +1,4 @@
-﻿package sgu.spring.backend.model;
+package sgu.spring.backend.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import sgu.spring.backend.enums.EPickUpType;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "bus_seat")
+@Table(name = "station_schedule")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -20,7 +20,7 @@ public class StationSchedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name= "scheduleId")
     private Schedule schedule;
 
@@ -31,4 +31,7 @@ public class StationSchedule {
     private LocalDateTime timeArrival;
 
     private EPickUpType pickUpType;
+
+    private boolean enable;
+
 }

@@ -1,4 +1,4 @@
-﻿package sgu.spring.backend.enums;
+package sgu.spring.backend.enums;
 
 public enum EPickUpType {
     DON,

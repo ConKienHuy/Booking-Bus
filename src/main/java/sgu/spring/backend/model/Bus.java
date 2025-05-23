@@ -1,7 +1,11 @@
 package sgu.spring.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,7 +28,7 @@ public class Bus {
     @OneToMany(mappedBy = "bus")
     private List<BusSeat> busSeat;
 
-    private int status;
+    private boolean enable;
 
     private LocalDateTime  createdAt;
 

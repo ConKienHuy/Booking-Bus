@@ -4,8 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sgu.spring.backend.dto.seat.SeatRequest;
-import sgu.spring.backend.dto.seat.SeatResponse;
+import sgu.spring.backend.dto.seat.*;
 import sgu.spring.backend.service.SeatService;
 
 import java.util.List;
@@ -32,22 +31,22 @@ public class SeatController {
         return ResponseEntity.ok(seat);
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<SeatResponse> add(@RequestBody @Valid SeatRequest seatRequest) {
-        SeatResponse seatResponse = seatService.save(seatRequest);
-        return ResponseEntity.ok(seatResponse);
+    @PostMapping("/")
+    public ResponseEntity<AddSeatResponse> add(@RequestBody @Valid AddSeatRequest seatRequest) {
+        AddSeatResponse addSeatResponse = seatService.create(seatRequest);
+        return ResponseEntity.ok(addSeatResponse);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<SeatResponse> update(@PathVariable("id") long id, @RequestBody @Valid SeatRequest seatRequest) {
-        SeatResponse seatResponse = seatService.save(seatRequest);
-        return ResponseEntity.ok(seatResponse);
+    @PutMapping("/{id}")
+    public ResponseEntity<UpdateSeatResponse> update(@PathVariable("id") long id, @RequestBody @Valid UpdateSeatRequest seatRequest) {
+        UpdateSeatResponse updateSeatResponse = seatService.update(id ,seatRequest);
+        return ResponseEntity.ok(updateSeatResponse);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> delete(@PathVariable long id) {
-        seatService.delete(id);
-        return ResponseEntity.ok("");
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SeatResponse> delete(@PathVariable long id) {
+        SeatResponse seatResponse = seatService.delete(id);
+        return ResponseEntity.ok(seatResponse);
     }
 
 }

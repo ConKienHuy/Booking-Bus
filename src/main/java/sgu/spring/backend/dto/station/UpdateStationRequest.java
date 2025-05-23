@@ -3,7 +3,7 @@ package sgu.spring.backend.dto.station;
 import lombok.Data;
 
 @Data
-public class StationRequest {
+public class UpdateStationRequest {
 
     private String stationName;
 

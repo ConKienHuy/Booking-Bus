@@ -1,11 +1,10 @@
-﻿package sgu.spring.backend.controller;
+package sgu.spring.backend.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sgu.spring.backend.dto.station.StationRequest;
-import sgu.spring.backend.dto.station.StationResponse;
+import sgu.spring.backend.dto.station.*;
 import sgu.spring.backend.service.StationService;
 
 import java.util.List;
@@ -32,21 +31,21 @@ public class StationController {
         return ResponseEntity.ok(station);
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<StationResponse> add(@RequestBody @Valid StationRequest stationRequest) {
-        StationResponse stationResponse = stationService.create(stationRequest);
-        return ResponseEntity.ok(stationResponse);
+    @PostMapping("/")
+    public ResponseEntity<AddStationResponse> add(@RequestBody @Valid AddStationRequest stationRequest) {
+        AddStationResponse addStationResponse = stationService.create(stationRequest);
+        return ResponseEntity.ok(addStationResponse);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<StationResponse> update(@PathVariable("id") long id, @RequestBody @Valid StationRequest stationRequest) {
-        StationResponse stationResponse = stationService.update(id ,stationRequest);
-        return ResponseEntity.ok(stationResponse);
+    @PutMapping("/{id}")
+    public ResponseEntity<UpdateStationResponse> update(@PathVariable("id") long id, @RequestBody @Valid UpdateStationRequest stationRequest) {
+        UpdateStationResponse updateStationResponse = stationService.update(id, stationRequest);
+        return ResponseEntity.ok(updateStationResponse);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> delete(@PathVariable long id) {
-        stationService.delete(id);
-        return ResponseEntity.ok("");
+    @DeleteMapping("/{id}")
+    public ResponseEntity<StationResponse> delete(@PathVariable long id) {
+        StationResponse stationResponse = stationService.delete(id);
+        return ResponseEntity.ok(stationResponse);
     }
 }

@@ -29,7 +29,7 @@ public class BusSeat {
 
     private String seatNumber;
 
-    private int status;
+    private boolean enable;
 
     private LocalDateTime createdAt;
 
