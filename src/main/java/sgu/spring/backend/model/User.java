@@ -1,4 +1,4 @@
-package sgu.spring.backend.model;
+﻿package sgu.spring.backend.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,29 +7,29 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
-@Table(name = "bus")
+@Table(name = "user")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class Bus {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String busCode;
+    private String username;
 
-    private String numberPlate;
+    private String password;
 
-    @OneToMany(mappedBy = "bus")
-    private List<BusSeat> busSeat;
+    private String email;
 
-    private boolean enable;
+    private String phone;
 
-    private LocalDateTime  createdAt;
+    private boolean isEnable;
+
+    private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 }

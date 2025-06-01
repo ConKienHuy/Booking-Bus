@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "schedule")
@@ -24,8 +23,13 @@ public class Schedule {
     @JoinColumn(name = "busId")
     private Bus bus;
 
-    @OneToMany(mappedBy = "schedule")
-    private List<StationSchedule> scheduleList;
+    @ManyToOne
+    @JoinColumn(name = "stationFromId", referencedColumnName = "id")
+    private Station stationFrom;
+
+    @ManyToOne
+    @JoinColumn(name = "stationToId", referencedColumnName = "id")
+    private Station stationTo;
 
     private boolean enable;
 

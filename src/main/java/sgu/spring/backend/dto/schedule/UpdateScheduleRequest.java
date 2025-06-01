@@ -8,5 +8,7 @@ import java.util.List;
 public class UpdateScheduleRequest {
     private Long busId;
 
-    private List<Long> stationSchedules;
+    private Long stationFromId;
+
+    private Long stationToId;
 }

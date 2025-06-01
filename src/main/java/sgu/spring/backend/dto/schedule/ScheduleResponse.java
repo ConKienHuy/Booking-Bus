@@ -2,13 +2,16 @@ package sgu.spring.backend.dto.schedule;
 
 import lombok.Data;
 import sgu.spring.backend.dto.bus.BusResponse;
-import sgu.spring.backend.dto.stationschedule.StationScheduleWithoutScheduleResponse;
-
-import java.util.List;
+import sgu.spring.backend.dto.station.StationResponse;
 
 @Data
 public class ScheduleResponse {
     private Long id;
+
     private BusResponse bus;
-    private List<StationScheduleWithoutScheduleResponse> stationSchedules;
+
+    private StationResponse stationFrom;
+
+    private StationResponse stationTo;
+
 }
